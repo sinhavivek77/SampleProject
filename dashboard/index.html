@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Tracking Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ─── Header ─────────────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1"/>
+        <rect x="14" y="3" width="7" height="7" rx="1"/>
+        <rect x="3" y="14" width="7" height="7" rx="1"/>
+        <rect x="14" y="14" width="7" height="7" rx="1"/>
+      </svg>
+      <span>Project Tracker</span>
+    </div>
+
+    <nav class="header-nav">
+      <button class="nav-btn active" id="nav-dashboard">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-btn" id="nav-list">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px;margin-right:4px"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        All Projects
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <button class="btn btn-primary" id="btn-new-project">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Project
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Main ────────────────────────────────────────────────────────────── -->
+  <main class="main">
+
+    <!-- Dashboard View -->
+    <section class="view active" id="view-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-subtitle">Overview of all projects and work streams</div>
+        </div>
+      </div>
+
+      <!-- Metric Cards -->
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-label">Total Projects</div>
+          <div class="metric-value" id="metric-total">0</div>
+          <div class="metric-sub">across all statuses</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">In Progress</div>
+          <div class="metric-value" id="metric-inprogress">0</div>
+          <div class="metric-sub">actively running</div>
+        </div>
+        <div class="metric-card metric-atrisk">
+          <div class="metric-label">At Risk</div>
+          <div class="metric-value" id="metric-atrisk">0</div>
+          <div class="metric-sub">require attention</div>
+        </div>
+        <div class="metric-card metric-overdue">
+          <div class="metric-label">Overdue</div>
+          <div class="metric-value" id="metric-overdue">0</div>
+          <div class="metric-sub">past end date</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-label">Completed</div>
+          <div class="metric-value" id="metric-completed">0</div>
+          <div class="metric-sub">delivered</div>
+        </div>
+      </div>
+
+      <!-- Two-column panels -->
+      <div class="dashboard-grid">
+
+        <!-- Needs Attention -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Needs Attention
+              <span class="panel-count" id="attention-count">0</span>
+            </div>
+            <span style="font-size:11.5px;color:var(--color-text-muted)">Click to open project</span>
+          </div>
+          <div class="panel-body" id="attention-body">
+            <div class="panel-empty">Loading…</div>
+          </div>
+        </div>
+
+        <!-- Recently Updated -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              Recently Updated
+            </div>
+          </div>
+          <div class="panel-body" id="recent-body">
+            <div class="panel-empty">Loading…</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- List View -->
+    <section class="view" id="view-list">
+      <div class="page-header">
+        <div>
+          <div class="page-title">All Projects</div>
+          <div class="page-subtitle">Click any row to view or edit</div>
+        </div>
+        <button class="btn btn-primary" onclick="openModal(null)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Project
+        </button>
+      </div>
+
+      <!-- Filter Bar -->
+      <div class="filter-bar">
+        <div class="search-wrap">
+          <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" id="filter-search" placeholder="Search projects, people…">
+        </div>
+        <select id="filter-status">
+          <option value="">All Statuses</option>
+          <option value="Not Started">Not Started</option>
+          <option value="In Progress">In Progress</option>
+          <option value="At Risk">At Risk</option>
+          <option value="On Hold">On Hold</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+        <select id="filter-priority">
+          <option value="">All Priorities</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+          <option value="Critical">Critical</option>
+        </select>
+        <button class="btn btn-secondary btn-sm" id="filter-clear">Clear</button>
+        <span class="filter-count" id="filter-count"></span>
+      </div>
+
+      <!-- Table -->
+      <div class="table-wrap">
+        <table class="projects-table">
+          <thead>
+            <tr>
+              <th class="sortable" data-sort="name">Project Name <span class="sort-icon">↕</span></th>
+              <th class="sortable" data-sort="status">Status <span class="sort-icon">↕</span></th>
+              <th class="sortable" data-sort="priority">Priority <span class="sort-icon">↕</span></th>
+              <th class="sortable col-ae" data-sort="ae">AE <span class="sort-icon">↕</span></th>
+              <th class="sortable col-architect" data-sort="architect">Architect <span class="sort-icon">↕</span></th>
+              <th class="sortable" data-sort="leadDeveloper">Lead Dev <span class="sort-icon">↕</span></th>
+              <th class="sortable" data-sort="endDate">End Date <span class="sort-icon">↕</span></th>
+              <th>Risks</th>
+              <th class="sortable" data-sort="lastUpdated">Updated <span class="sort-icon">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="projects-tbody">
+            <tr><td colspan="9"><div class="table-empty">Loading…</div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ─── Modal ───────────────────────────────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">New Project</span>
+        <button class="btn-icon" id="btn-modal-close" title="Close" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+
+        <!-- Section 1: Project Details -->
+        <div class="form-section">
+          <div class="form-section-title">Project Details</div>
+
+          <div class="form-row">
+            <div class="form-field full">
+              <label class="form-label" for="field-name">Project Name <span class="required">*</span></label>
+              <input class="form-control" type="text" id="field-name" placeholder="e.g. Customer Portal Redesign" autocomplete="off">
+              <span class="form-error" id="error-name">Project name is required.</span>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field full">
+              <label class="form-label" for="field-description">Description</label>
+              <textarea class="form-control" id="field-description" rows="3" placeholder="Brief description of scope, goals and deliverables…"></textarea>
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="form-field">
+              <label class="form-label" for="field-status">Status <span class="required">*</span></label>
+              <select class="form-control" id="field-status">
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="At Risk">At Risk</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="field-priority">Priority</label>
+              <select class="form-control" id="field-priority">
+                <option value="Low">Low</option>
+                <option value="Medium" selected>Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row cols-2">
+            <div class="form-field">
+              <label class="form-label" for="field-start-date">Start Date</label>
+              <input class="form-control" type="date" id="field-start-date">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="field-end-date">End Date</label>
+              <input class="form-control" type="date" id="field-end-date">
+              <span class="form-error" id="error-date">End date must be on or after start date.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Team -->
+        <div class="form-section">
+          <div class="form-section-title">Team</div>
+          <div class="form-row cols-2">
+            <div class="form-field">
+              <label class="form-label" for="field-ae">Account Executive (AE)</label>
+              <input class="form-control" type="text" id="field-ae" placeholder="Name">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="field-business-sponsor">Business Sponsor</label>
+              <input class="form-control" type="text" id="field-business-sponsor" placeholder="Name">
+            </div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="form-field">
+              <label class="form-label" for="field-architect">Architect</label>
+              <input class="form-control" type="text" id="field-architect" placeholder="Name">
+            </div>
+            <div class="form-field">
+              <label class="form-label" for="field-lead-dev">Lead Developer</label>
+              <input class="form-control" type="text" id="field-lead-dev" placeholder="Name">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 3: Risks -->
+        <div class="form-section">
+          <div class="form-section-title">Risks</div>
+          <div class="risk-list" id="risk-list"></div>
+          <button type="button" class="add-risk-btn" id="btn-add-risk">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Risk
+          </button>
+        </div>
+
+      </div><!-- /modal-body -->
+
+      <div class="modal-footer">
+        <button class="btn btn-danger" id="btn-delete" style="display:none">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
+          Delete Project
+        </button>
+        <div class="modal-footer-right">
+          <button class="btn btn-secondary" id="btn-modal-cancel">Cancel</button>
+          <button class="btn btn-primary" id="btn-modal-save">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Save Project
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /modal -->
+  </div><!-- /modal-overlay -->
+
+  <!-- ─── Toast Container ──────────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
